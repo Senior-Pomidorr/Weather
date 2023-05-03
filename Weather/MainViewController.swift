@@ -22,13 +22,19 @@ class MainViewController: UIViewController {
         return imageView
     }()
     
-    private let buttonLocation: UIButton = {
+    private lazy var buttonLocation: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setBackgroundImage(UIImage(systemName: "location.circle.fill"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
+        button.addTarget(self, action: #selector(tapPrint), for: .touchUpInside)
         return button
     }()
+    
+    @objc func tapPrint() {
+        print("tap")
+        
+    }
     
     private let searchText: UITextField = {
         let searchText = UITextField()
@@ -39,20 +45,24 @@ class MainViewController: UIViewController {
         searchText.layer.cornerRadius = 5
         searchText.font = .systemFont(ofSize: 25)
         searchText.borderStyle = .roundedRect
-        let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: searchText.frame.height))
-        searchText.rightView = rightPaddingView
-        searchText.rightViewMode = .always
+        searchText.autocapitalizationType = .words
+        searchText.returnKeyType = .go
         return searchText
         
     }()
     
-    private let buttonSearch: UIButton = {
+    private lazy var buttonSearch: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setBackgroundImage(UIImage(systemName: "magnifyingglass"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .label
+        button.addTarget(self, action: #selector(tapSearch), for: .touchUpInside)
         return button
     }()
+    
+    @objc func tapSearch() {
+        print(searchText.text!)
+    }
     
     private let stackView: UIStackView = {
         let stack = UIStackView()
@@ -66,8 +76,8 @@ class MainViewController: UIViewController {
     private let weatherState: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.image = UIImage(systemName: "sun.max")
-        image.tintColor = .black
+        image.image = UIImage(systemName: "cloud.rain")
+        image.tintColor = .label
         return image
     }()
     
@@ -114,7 +124,7 @@ class MainViewController: UIViewController {
 extension MainViewController {
     func layout() {
         view.addSubview(pictureView)
-        pictureView.addSubview(stackView)
+        view.addSubview(stackView)
         pictureView.addSubview(stackViewCelcius)
         pictureView.addSubview(weatherState)
         pictureView.addSubview(cityLabel)
@@ -124,6 +134,7 @@ extension MainViewController {
         stackViewCelcius.addArrangedSubview(degrees)
         stackViewCelcius.addArrangedSubview(degreesSign)
         stackViewCelcius.addArrangedSubview(degreesCelsius)
+        
         
         NSLayoutConstraint.activate([
             pictureView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -158,6 +169,7 @@ extension MainViewController {
             buttonSearch.widthAnchor.constraint(equalToConstant: 40),
             
             searchText.heightAnchor.constraint(equalToConstant: 40),
+            
         ])
     }
     
