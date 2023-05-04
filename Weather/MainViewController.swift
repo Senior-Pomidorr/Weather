@@ -7,10 +7,11 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchText.delegate = self
         layout()
     }
     
@@ -32,6 +33,7 @@ class MainViewController: UIViewController {
     }()
     
     @objc func tapPrint() {
+        searchText.endEditing(true)
         print("tap")
         
     }
@@ -118,6 +120,25 @@ class MainViewController: UIViewController {
         degrees.translatesAutoresizingMaskIntoConstraints = false
         return degrees
     }()
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchText.endEditing(true)
+        print(searchText.text!)
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if textField.text != "" {
+            return true
+        } else {
+            textField.placeholder = "Type something"
+            return false
+        }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        searchText.text = ""
+    }
     
 }
 
