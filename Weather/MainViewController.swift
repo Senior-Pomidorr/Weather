@@ -9,6 +9,8 @@ import UIKit
 
 class MainViewController: UIViewController, UITextFieldDelegate {
     
+    var weatherManager = WeatherManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         searchText.delegate = self
@@ -137,6 +139,11 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        if let city = searchText.text {
+            weatherManager.fetchWeather(cityName: city)
+        }
+        
         searchText.text = ""
     }
     
