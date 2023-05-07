@@ -7,13 +7,15 @@
 
 import UIKit
 
-class MainViewController: UIViewController, UITextFieldDelegate {
+class MainViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+   
     
     var weatherManager = WeatherManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         searchText.delegate = self
+        weatherManager.delegate = self
         layout()
     }
     
@@ -145,6 +147,10 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         }
         
         searchText.text = ""
+    }
+    
+    func didUpdateWeather(weather: WeatherModel) {
+        print(weather.temperature)
     }
     
 }
