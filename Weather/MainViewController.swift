@@ -6,16 +6,20 @@
 //
 
 import UIKit
+import CoreLocation
 
-class MainViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+class MainViewController: UIViewController {
    
-    
     var weatherManager = WeatherManager()
+    let locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager.delegate = self
         searchText.delegate = self
         weatherManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
         layout()
     }
     
@@ -125,42 +129,6 @@ class MainViewController: UIViewController, UITextFieldDelegate, WeatherManagerD
         return degrees
     }()
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        searchText.endEditing(true)
-        print(searchText.text!)
-        return true
-    }
-    
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        if textField.text != "" {
-            return true
-        } else {
-            textField.placeholder = "Type something"
-            return false
-        }
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        
-        if let city = searchText.text {
-            weatherManager.fetchWeather(cityName: city)
-        }
-        
-        searchText.text = ""
-    }
-    
-    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        DispatchQueue.main.async {
-            self.degrees.text = weather.temeratureString
-            self.weatherState.image = UIImage(systemName: weather.conditionName)
-            self.cityLabel.text = weather.cityName
-        }
-    }
-    
-    func didFailWithError(error: Error) {
-        print(error)
-    }
-    
 }
 
 extension MainViewController {
@@ -218,3 +186,65 @@ extension MainViewController {
     
 }
 
+//MARK: - UITextFieldDelegate
+
+extension MainViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchText.endEditing(true)
+        print(searchText.text!)
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if textField.text != "" {
+            return true
+        } else {
+            textField.placeholder = "Type something"
+            return false
+        }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if let city = searchText.text {
+            weatherManager.fetchWeather(cityName: city)
+        }
+        searchText.text = ""
+    }
+}
+
+
+//MARK: - WeatherManagerDelegate
+
+extension MainViewController: WeatherManagerDelegate {
+    
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
+        DispatchQueue.main.async {
+            self.degrees.text = weather.temeratureString
+            self.weatherState.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
+        }
+    }
+    
+    func didFailWithError(error: Error) {
+        print(error)
+    }
+}
+
+
+//MARK: - CLLocationManagerDelegate
+extension MainViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            let lat = location.coordinate.latitude
+            let lon = location.coordinate.longitude
+            print(lat)
+            print(lon)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("error")
+    }
+    
+}
