@@ -42,7 +42,7 @@ class MainViewController: UIViewController {
     
     @objc func tapPrint() {
         searchText.endEditing(true)
-        print("tap")
+        locationManager.requestLocation()
         
     }
     
@@ -236,15 +236,14 @@ extension MainViewController: WeatherManagerDelegate {
 extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            locationManager.stopUpdatingLocation()
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
-            print(lat)
-            print(lon)
+            weatherManager.fetchWeather(latitude: lat, longitude: lon)
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("error")
     }
-    
 }
