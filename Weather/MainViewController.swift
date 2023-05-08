@@ -149,8 +149,16 @@ class MainViewController: UIViewController, UITextFieldDelegate, WeatherManagerD
         searchText.text = ""
     }
     
-    func didUpdateWeather(weather: WeatherModel) {
-        print(weather.temperature)
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
+        DispatchQueue.main.async {
+            self.degrees.text = weather.temeratureString
+            self.weatherState.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
+        }
+    }
+    
+    func didFailWithError(error: Error) {
+        print(error)
     }
     
 }
@@ -171,6 +179,7 @@ extension MainViewController {
         
         
         NSLayoutConstraint.activate([
+            
             pictureView.topAnchor.constraint(equalTo: view.topAnchor),
             pictureView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             pictureView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -192,7 +201,7 @@ extension MainViewController {
             
             cityLabel.topAnchor.constraint(equalTo: stackViewCelcius.bottomAnchor, constant: 5),
             cityLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-
+            
         ])
         
         NSLayoutConstraint.activate([
